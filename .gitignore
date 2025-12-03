@@ -1,0 +1,17 @@
+# Windows junk
+Thumbs.db
+desktop.ini
+
+# macOS junk (if anyone else uses Mac)
+.DS_Store
+._*
+Icon?
+.Spotlight-V100
+.Trashes
+
+# Microsoft Word temp files
+~$*.doc
+~$*.docx
+
+# General temp files
+*.tmp
