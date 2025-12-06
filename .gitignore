@@ -12,6 +12,7 @@ Icon?
 # Microsoft Word temp files
 ~$*.doc
 ~$*.docx
+~$*
 
 # General temp files
 *.tmp
