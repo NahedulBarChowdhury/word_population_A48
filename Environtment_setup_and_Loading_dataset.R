@@ -1,12 +1,13 @@
 install.packages("tidyverse")  # For data manipulation
 install.packages("countrycode") # For country-to-continent mapping
 install.packages("ggplot2")     # For visualizations
-
+install.packages("dplyr")
 
 # Load libraries
 library(tidyverse)
 library(countrycode)
 library(ggplot2)
+library(dplyr)
 
 cat("✅ Libraries loaded successfully!\n")
 
@@ -25,3 +26,4 @@ head(population_data, 3)
 # Check for missing values
 missing_values <- sum(is.na(population_data))
 cat("\nTotal missing values:", missing_values, "\n")
+
