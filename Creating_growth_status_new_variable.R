@@ -23,3 +23,5 @@ test_rows$Growth_Status <- ifelse(
       "Declining")
 
 
+cat("=== TEST RESULTS (First 10 rows) ===\n")
+print(test_rows[, c("Country..or.dependency.", "Yearly.Change", "Growth_Status")])
