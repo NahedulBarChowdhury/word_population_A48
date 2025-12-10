@@ -2,12 +2,14 @@ install.packages("tidyverse")  # For data manipulation
 install.packages("countrycode") # For country-to-continent mapping
 install.packages("ggplot2")     # For visualizations
 install.packages("dplyr")
+install.packages("viridis")
 
 # Load libraries
 library(tidyverse)
 library(countrycode)
 library(ggplot2)
 library(dplyr)
+library(viridis)
 
 cat("✅ Libraries loaded successfully!\n")
 
