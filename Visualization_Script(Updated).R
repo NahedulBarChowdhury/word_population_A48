@@ -191,3 +191,237 @@ story2_plot <- ggplot(story2_data,
 print(story2_plot)
 ggsave("story2_growth_balance_gradient.png", story2_plot, width = 12, height = 8, dpi = 300)
 
+
+
+
+
+
+# Shows the hierarchy of growth dominance across continents
+
+# Calculate growth hierarchy
+story3_data <- population_data %>%
+  group_by(Continent) %>%
+  summarise(
+    Total = n(),
+    Growing = sum(Growth_Status == "Growing"),
+    Declining = sum(Growth_Status == "Declining"),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    Growth_Ratio = Growing / (Growing + Declining),
+    # Create hierarchy levels
+    Hierarchy_Level = case_when(
+      Growth_Ratio >= 0.8 ~ "Very High Growth",
+      Growth_Ratio >= 0.6 ~ "High Growth",
+      Growth_Ratio >= 0.4 ~ "Moderate Growth",
+      Growth_Ratio >= 0.2 ~ "Low Growth",
+      TRUE ~ "Very Low Growth"
+    )
+  ) %>%
+  arrange(desc(Growth_Ratio))
+
+# Create hierarchy gradient colors
+hierarchy_colors <- c(
+  "Very High Growth" = "#006400",    # Dark green
+  "High Growth" = "#228B22",         # Forest green
+  "Moderate Growth" = "#32CD32",     # Lime green
+  "Low Growth" = "#90EE90",          # Light green
+  "Very Low Growth" = "#FFB6C1"      # Light pink (for contrast)
+)
+
+story3_plot <- ggplot(story3_data, 
+                      aes(x = reorder(Continent, -Growth_Ratio), 
+                          y = Total)) +
+  
+  # Background bar (total countries)
+  geom_col(fill = "#F5F5F5", alpha = 0.3, width = 0.7) +
+  
+  # Growing countries (stacked on top)
+  geom_col(aes(y = Growing, fill = Hierarchy_Level), 
+           width = 0.7, alpha = 0.9) +
+  
+  # Add texture gradient to growing bars
+  geom_col(aes(y = Growing, alpha = Growth_Ratio), 
+           fill = "white", width = 0.7, show.legend = FALSE) +
+  
+  scale_fill_manual(values = hierarchy_colors, name = "Growth Level") +
+  scale_alpha_continuous(range = c(0, 0.4)) +
+  
+  # Add labels for growing countries
+  geom_text(
+    aes(y = Growing, label = paste0(Growing, "/", Total)),
+    vjust = -0.5,
+    color = "#2C3E50",
+    fontface = "bold",
+    size = 4
+  ) +
+  
+  # Add percentage labels inside bars
+  geom_text(
+    aes(y = Growing/2, 
+        label = paste0(round(Growth_Ratio * 100, 0), "%")),
+    color = "white",
+    fontface = "bold",
+    size = 4.5
+  ) +
+  
+  # Titles and labels
+  labs(
+    title = "GROWTH DOMINANCE HIERARCHY",
+    subtitle = "Shows growth hierarchy across continents\nDark green = Very High Growth, Light green = Low Growth",
+    x = "Continent (Ordered by Growth %)",
+    y = "Number of Countries",
+    caption = "Story: Hierarchy of growth dominance across continents"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5, color = "#2C3E50"),
+    plot.subtitle = element_text(size = 12, hjust = 0.5, color = "#7F8C8D", margin = margin(b = 15)),
+    axis.title = element_text(face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, face = "bold", size = 11),
+    legend.position = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.background = element_rect(fill = "white", color = NA)
+  ) +
+  
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
+
+print(story3_plot)
+ggsave("story3_growth_hierarchy_gradient.png", story3_plot, width = 11, height = 8, dpi = 300)
+
+
+
+
+
+# Shows different distribution patterns across continents
+
+# First, let's create population categories (but we won't use population data)
+# We'll just use the counts to create interesting patterns
+
+story4_data <- population_data %>%
+  group_by(Continent) %>%
+  summarise(
+    Growing = sum(Growth_Status == "Growing"),
+    Declining = sum(Growth_Status == "Declining"),
+    Total = n(),
+    .groups = 'drop'
+  ) %>%
+  mutate(
+    # Create pattern categories based on distribution
+    Pattern_Type = case_when(
+      Growing >= Declining * 2 ~ "Heavily Growing",
+      Growing > Declining ~ "Moderately Growing",
+      Growing == Declining ~ "Balanced",
+      Declining > Growing ~ "Moderately Declining",
+      Declining >= Growing * 2 ~ "Heavily Declining"
+    )
+  ) %>%
+  arrange(desc(Growing))
+
+# Create pattern gradient colors
+pattern_colors <- c(
+  "Heavily Growing" = "#00441B",     # Very dark green
+  "Moderately Growing" = "#238B45",  # Medium green
+  "Balanced" = "#FFD700",            # Gold
+  "Moderately Declining" = "#CB181D", # Medium red
+  "Heavily Declining" = "#67000D"    # Very dark red
+)
+
+# Create a stacked bar with pattern overlay effect
+story4_plot <- ggplot(story4_data) +
+  
+  # Base bars (Total)
+  geom_col(aes(x = reorder(Continent, -Total), y = Total),
+           fill = "#F0F0F0", width = 0.7, alpha = 0.5) +
+  
+  # Declining countries (bottom stack)
+  geom_col(aes(x = reorder(Continent, -Total), y = Declining),
+           fill = "#FF6B6B", width = 0.7, alpha = 0.7) +
+  
+  # Growing countries (top stack)
+  geom_col(aes(x = reorder(Continent, -Total), y = Growing),
+           fill = "#4ECDC4", width = 0.7, alpha = 0.7,
+           position = position_nudge(y = story4_data$Declining)) +
+  
+  # Pattern overlay based on Pattern_Type
+  geom_tile(
+    aes(x = as.numeric(reorder(Continent, -Total)),
+        y = Total/2,
+        width = 0.5,
+        height = Total,
+        fill = Pattern_Type),
+    alpha = 0.2
+  ) +
+  
+  scale_fill_manual(values = pattern_colors, name = "Distribution Pattern") +
+  
+  # Add connecting lines to show the split
+  geom_segment(
+    aes(x = as.numeric(reorder(Continent, -Total)) - 0.35,
+        xend = as.numeric(reorder(Continent, -Total)) + 0.35,
+        y = Declining,
+        yend = Declining),
+    color = "gray40",
+    linetype = "dashed",
+    size = 0.5
+  ) +
+  
+  # Labels for growing
+  geom_text(
+    aes(x = reorder(Continent, -Total),
+        y = Declining + Growing/2,
+        label = paste0("G:", Growing)),
+    color = "white",
+    fontface = "bold",
+    size = 4
+  ) +
+  
+  # Labels for declining
+  geom_text(
+    aes(x = reorder(Continent, -Total),
+        y = Declining/2,
+        label = paste0("D:", Declining)),
+    color = "white",
+    fontface = "bold",
+    size = 4
+  ) +
+  
+  # Pattern type labels
+  geom_text(
+    aes(x = reorder(Continent, -Total),
+        y = Total + max(story4_data$Total) * 0.05,
+        label = Pattern_Type),
+    color = "#2C3E50",
+    fontface = "bold",
+    size = 3.5
+  ) +
+  
+  # Titles and labels
+  labs(
+    title = "GROWTH DISTRIBUTION PATTERNS",
+    subtitle = "Shows different distribution patterns of growth across continents\nBlue = Growing, Red = Declining, Pattern overlay shows distribution type",
+    x = "Continent (Ordered by Total Countries)",
+    y = "Number of Countries",
+    caption = "Story: Different patterns of growth distribution across continents"
+  ) +
+  
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold", size = 18, hjust = 0.5, color = "#2C3E50"),
+    plot.subtitle = element_text(size = 12, hjust = 0.5, color = "#7F8C8D", margin = margin(b = 15)),
+    axis.title = element_text(face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, face = "bold", size = 11),
+    legend.position = "bottom",
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    plot.background = element_rect(fill = "white", color = NA)
+  ) +
+  
+  scale_y_continuous(expand = expansion(mult = c(0, 0.15)))
+
+print(story4_plot)
+ggsave("story4_growth_patterns_gradient.png", story4_plot, width = 11, height = 8, dpi = 300)
+
+
