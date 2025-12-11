@@ -1,3 +1,9 @@
+# Here we were preparing the data for the actual statistical test. We removed
+# the countries that were labelled as Other, created the final contingency
+# table, and ran the chi square test to see whether population growth status
+# differed across continents. We also checked the expected frequencies, computed
+# the effect size, and restated the hypotheses to make the conclusion clear.
+
 # Prepare data for analysis (remove "Other" category)
 population_data_main <- population_data[population_data$Continent != "Other", ]
 population_data_main$Continent <- droplevels(as.factor(population_data_main$Continent))
