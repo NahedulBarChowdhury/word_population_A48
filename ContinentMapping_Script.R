@@ -1,3 +1,8 @@
+# Here we were assigning each country to its continent using the countrycode 
+# package. We checked for any countries that could not be matched, labelled 
+# them as Other, and then printed out the distribution to confirm that the 
+# mapping looked correct before moving on with the analysis.
+
 # First, let's create the continent mapping using countrycode
 population_data$Continent <- countrycode(
   sourcevar = population_data$Country..or.dependency.,

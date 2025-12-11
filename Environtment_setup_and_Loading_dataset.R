@@ -1,3 +1,10 @@
+# Here we were setting up the environment for the project. We installed and
+# loaded the libraries, imported the population dataset, and checked the key
+# details such as the number of countries, the variable names, the structure,
+# and any missing values. This was simply to confirm that everything was clean
+# and ready before moving on to the analysis.
+
+
 install.packages("tidyverse")  # For data manipulation
 install.packages("countrycode") # For country-to-continent mapping
 install.packages("ggplot2")     # For visualizations

@@ -1,3 +1,14 @@
+# Here we were running the full analysis 
+# We installed and loaded the libraries, brought in the dataset, and checked its 
+# structure and missing values. Then we cleaned the yearly change column by fixing 
+# symbols and converting it into a numeric variable, which allowed us to classify 
+# each country as either growing or declining. After that, we mapped every country 
+# to its continent and checked for any unmapped cases. Once the data was ready, 
+# we created several visual stories to explore how growth patterns varied across 
+# continents, looking at averages, balance, hierarchy, and distribution differences. 
+# Finally, we performed a chi square test to see whether growth status depended on 
+# continent and interpreted the statistical results to support our conclusions.
+
 #instaling Libraries
 install.packages("tidyverse")  # For data manipulation
 install.packages("countrycode") # For country-to-continent mapping
