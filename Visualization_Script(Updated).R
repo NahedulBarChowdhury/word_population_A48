@@ -198,8 +198,10 @@ ggsave("story2_growth_balance_gradient.png", story2_plot, width = 12, height = 8
 
 # Shows the hierarchy of growth dominance across continents
 
-# Calculate growth hierarchy
+
+# Calculate growth hierarchy and remove "Other" category
 story3_data <- population_data %>%
+  filter(Continent != "Other") %>%  # Remove "Other" category
   group_by(Continent) %>%
   summarise(
     Total = n(),
@@ -220,79 +222,141 @@ story3_data <- population_data %>%
   ) %>%
   arrange(desc(Growth_Ratio))
 
-# Create hierarchy gradient colors
+print("Filtered Data (without 'Other' category):")
+print(story3_data)
+
+# Create a vibrant rainbow gradient for the hierarchy levels
 hierarchy_colors <- c(
-  "Very High Growth" = "#006400",    # Dark green
-  "High Growth" = "#228B22",         # Forest green
-  "Moderate Growth" = "#32CD32",     # Lime green
-  "Low Growth" = "#90EE90",          # Light green
-  "Very Low Growth" = "#FFB6C1"      # Light pink (for contrast)
+  "Very High Growth" = "#FF0000",    # Red (hottest)
+  "High Growth" = "#FF8000",         # Orange
+  "Moderate Growth" = "#FFFF00",     # Yellow
+  "Low Growth" = "#00FF00",          # Green
+  "Very Low Growth" = "#0000FF"      # Blue (coldest)
 )
+
 
 story3_plot <- ggplot(story3_data, 
                       aes(x = reorder(Continent, -Growth_Ratio), 
                           y = Total)) +
   
-  # Background bar (total countries)
-  geom_col(fill = "#F5F5F5", alpha = 0.3, width = 0.7) +
+  # Background bar (total countries) - use subtle gradient
+  geom_col(fill = "#F0F0F0", alpha = 0.3, width = 0.7) +
   
-  # Growing countries (stacked on top)
+  # Growing countries (stacked on top) with vibrant gradient
   geom_col(aes(y = Growing, fill = Hierarchy_Level), 
            width = 0.7, alpha = 0.9) +
   
-  # Add texture gradient to growing bars
-  geom_col(aes(y = Growing, alpha = Growth_Ratio), 
-           fill = "white", width = 0.7, show.legend = FALSE) +
+  # Add subtle gradient overlay for more vibrant effect
+  geom_col(aes(y = Growing), 
+           fill = "white", 
+           alpha = 0.1, 
+           width = 0.7) +
   
-  scale_fill_manual(values = hierarchy_colors, name = "Growth Level") +
-  scale_alpha_continuous(range = c(0, 0.4)) +
+  # VIBRANT RAINBOW GRADIENT SCALE
+  scale_fill_manual(
+    values = hierarchy_colors,
+    name = "Growth Level",
+    guide = guide_legend(reverse = TRUE)  # Reverse legend to match bar order
+  ) +
   
-  # Add labels for growing countries
+  # Add labels for growing countries - bold black for contrast
   geom_text(
     aes(y = Growing, label = paste0(Growing, "/", Total)),
     vjust = -0.5,
-    color = "#2C3E50",
+    color = "black",
     fontface = "bold",
-    size = 4
+    size = 4.5
   ) +
   
-  # Add percentage labels inside bars
+  # Add percentage labels inside bars - white for readability
   geom_text(
     aes(y = Growing/2, 
         label = paste0(round(Growth_Ratio * 100, 0), "%")),
     color = "white",
     fontface = "bold",
-    size = 4.5
+    size = 5,
+    alpha = 0.9
   ) +
   
   # Titles and labels
   labs(
-    title = "GROWTH DOMINANCE HIERARCHY",
-    subtitle = "Shows growth hierarchy across continents\nDark green = Very High Growth, Light green = Low Growth",
-    x = "Continent (Ordered by Growth %)",
+    title = "CONTINENTAL GROWTH HIERARCHY",
+    subtitle = "Vibrant rainbow gradient shows growth intensity across continents\nRed (Very High) → Orange → Yellow → Green → Blue (Very Low)",
+    x = "Continent (Ranked by Growth Percentage)",
     y = "Number of Countries",
-    caption = "Story: Hierarchy of growth dominance across continents"
+    caption = "Data Analysis: Population Growth Status by Continent"
   ) +
   
-  theme_minimal(base_size = 13) +
+  theme_minimal(base_size = 14) +
   theme(
-    plot.title = element_text(face = "bold", size = 18, hjust = 0.5, color = "#2C3E50"),
-    plot.subtitle = element_text(size = 12, hjust = 0.5, color = "#7F8C8D", margin = margin(b = 15)),
-    axis.title = element_text(face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, face = "bold", size = 11),
+    plot.title = element_text(
+      face = "bold", 
+      size = 20, 
+      hjust = 0.5, 
+      color = "#333333",
+      margin = margin(b = 10)
+    ),
+    plot.subtitle = element_text(
+      size = 13, 
+      hjust = 0.5, 
+      color = "#666666", 
+      margin = margin(b = 20)
+    ),
+    axis.title = element_text(
+      face = "bold", 
+      size = 13, 
+      color = "#333333"
+    ),
+    axis.text.x = element_text(
+      angle = 45, 
+      hjust = 1, 
+      vjust = 1, 
+      face = "bold", 
+      size = 12, 
+      color = "#333333"
+    ),
+    axis.text.y = element_text(
+      size = 11, 
+      color = "#333333"
+    ),
     legend.position = "bottom",
+    legend.title = element_text(
+      face = "bold", 
+      size = 12, 
+      color = "#333333"
+    ),
+    legend.text = element_text(
+      size = 11, 
+      color = "#333333"
+    ),
+    legend.key.size = unit(1, "cm"),
     panel.grid.major.x = element_blank(),
     panel.grid.minor = element_blank(),
-    plot.background = element_rect(fill = "white", color = NA)
+    panel.grid.major.y = element_line(color = "#E0E0E0", size = 0.5),
+    plot.background = element_rect(fill = "white", color = NA),
+    panel.background = element_rect(fill = "white", color = NA),
+    plot.margin = margin(20, 20, 20, 20)
   ) +
   
-  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
+  # Add subtle glow effect to bars
+  geom_col(
+    aes(y = Growing),
+    fill = NA,
+    color = "white",
+    size = 1,
+    width = 0.71,
+    alpha = 0.3
+  ) +
+  
+  # Ensure y-axis shows proper range
+  scale_y_continuous(
+    expand = expansion(mult = c(0, 0.15)),
+    breaks = seq(0, 60, by = 10),
+    limits = c(0, max(story3_data$Total) * 1.15)
+  )
 
 print(story3_plot)
-ggsave("story3_growth_hierarchy_gradient.png", story3_plot, width = 11, height = 8, dpi = 300)
-
-
-
+ggsave("vibrant_growth_hierarchy_gradient.png", story3_plot, width = 12, height = 8, dpi = 300)
 
 
 # Shows different distribution patterns across continents
