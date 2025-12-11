@@ -1,3 +1,11 @@
+# Here we were creating a series of visual stories to explore how population 
+# growth patterns differed across continents. We calculated averages, ratios, 
+# hierarchies and distribution patterns, then used several types of plots to 
+# show which continents were above or below the global trend, how balanced 
+# they were between growth and decline, and how strong their growth levels 
+# were overall. The goal was to break the data into clear, interpretable 
+# insights through visuals.
+
 # Story: "Which continents are above/below average in growth?"
 
 # Calculate average growth percentage globally
