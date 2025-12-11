@@ -30,7 +30,7 @@ diverging_bar <- ggplot(diverging_data, aes(x = Continent)) +
     stat = "identity",
     width = 0.7
   ) +
-  # Reference line for average
+  # global average reference line
   geom_hline(
     yintercept = avg_growing,
     color = "#2C3E50",
@@ -42,7 +42,7 @@ diverging_bar <- ggplot(diverging_data, aes(x = Continent)) +
   annotate(
     "text",
     x = length(unique(diverging_data$Continent)) - 0.5,
-    y = avg_growing + 2,
+    y = avg_growing + 2, # small offset so label sits above dashed line
     label = paste0("Global Average: ", round(avg_growing, 1), "%"),
     color = "#2C3E50",
     fontface = "bold",
@@ -98,7 +98,7 @@ ggsave("diverging_bar_gradient.png", diverging_bar, width = 10, height = 7)
     .groups = 'drop'
   ) %>%
   mutate(
-    Balance_Ratio = Growing / Declining,
+    Balance_Ratio = Growing / Declining,  # >1 means more growing than declining
     Balance_Status = case_when(
       Balance_Ratio > 1.5 ~ "Strongly Growing",
       Balance_Ratio > 1 ~ "Moderately Growing",
@@ -416,6 +416,7 @@ story4_plot <- ggplot(story4_data) +
   geom_col(aes(x = reorder(Continent, -Total), y = Growing),
            fill = "#4ECDC4", width = 0.7, alpha = 0.7,
            position = position_nudge(y = story4_data$Declining)) +
+  # nudge is used to stack Growing *above* Declining manually
   
   # Pattern overlay based on Pattern_Type
   geom_tile(
