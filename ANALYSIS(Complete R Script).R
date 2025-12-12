@@ -27,7 +27,7 @@ cat("✅ Libraries loaded successfully!\n")
 
 population_data <- read.csv("population_data.csv")
 
-# Basic dataset information
+# checking Basic information about dataset
 cat("=== DATASET OVERVIEW ===\n")
 cat("Total countries:", nrow(population_data), "\n")
 cat("Variables available:\n")
@@ -45,6 +45,7 @@ cat("\nTotal missing values:", missing_values, "\n")
 # Creating New Variable Growth Status
 cat("=== CHECKING YEARLY CHANGE VALUES ===\n")
 print(head(population_data$Yearly.Change, 10))
+# CLEANING THE YEARLY CHANGE COLUMN
 # Converting Yearly Change to numeric (handle special minus sign)
 # Replacing the special minus sign with regular minus
 population_data$Yearly_Change_Numeric <- gsub("−", "-", population_data$Yearly.Change)
